@@ -1,4 +1,6 @@
 link to explanation:
 https://bruinsslot.jp/post/simple-http-webserver-in-c/
 
-
+Goals:
+_ get html to show up from loop back IP adress.
+_ get html to show up from different device on same private network. 
