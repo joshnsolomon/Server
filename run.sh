@@ -1,1 +1,1 @@
-gcc server.c -o server && ./server
+gcc main.c server.c -o server && ./server
