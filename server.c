@@ -76,9 +76,9 @@ int buffer_write(int socket, void* resp){
 }
 
 char* file_to_string(const char* path){
-    FILE* file = fopen(path,"r");
+    FILE* file = fopen(path,"rb");
     if(file == NULL)
-        perror("html read error");
+        perror("file read error");
 
     //get size
     fseek(file, 0, SEEK_END);

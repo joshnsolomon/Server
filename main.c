@@ -1,9 +1,11 @@
 #include "server.h"
+#include <regex.h>
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
 #define HTML "./page/HelloWorld.html"
+#define FLOWERS "./page/flowers3.jpg"
 
 int main(){
     printf("Hello, world!\n");
@@ -17,6 +19,17 @@ int main(){
 
     char* html = file_to_string(HTML);
     char* resp = concat_strings(header, html);
+
+    char imageheader[] = "HTTP/1.0 200 OK\r\n"
+                         "Content-Type: image/jpeg\r\n"
+                         "Content-Length: 50000\r\n\r\n";
+    char* flowers = file_to_string(FLOWERS);
+    char* img_resp = concat_strings(imageheader, flowers);
+
+    //regex 
+    regex_t re;
+    regcomp(&re, "flowers3", 0);
+
 
 
     //setup
@@ -37,7 +50,12 @@ int main(){
 
 
         //write
-        buffer_write(newsockfd, resp);
+        if(regexec(&re, buffer, 0, NULL, 0) == 0){
+            buffer_write(newsockfd, img_resp);
+            printf("**************************** they want the flowers ************************************************");
+        }
+        else 
+            buffer_write(newsockfd, resp);
 
         close(newsockfd);
     }
