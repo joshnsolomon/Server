@@ -1,4 +1,5 @@
 #include "server.h"
+#include <stdlib.h>
 
 int setup(int* sockfd, struct sockaddr_in* host_addr, int port){
 
@@ -72,4 +73,38 @@ int buffer_write(int socket, void* resp){
             return 5;
         }
     return 0;
+}
+
+char* file_to_string(const char* path){
+    FILE* file = fopen(path,"r");
+    if(file == NULL)
+        perror("html read error");
+
+    //get size
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    //allocate memory for string
+    char* fileContent = (char*)malloc(fileSize+1); //for term char
+    if(fileContent == NULL)
+        perror("file malloc failed");
+    
+    fread(fileContent, 1, fileSize, file);
+    fileContent[fileSize] = '\0';
+    fclose(file);
+
+    return fileContent;
+}
+
+char* concat_strings(char* str1, char* str2){
+    size_t len1 = strlen(str1);
+    size_t len2 = strlen(str2);
+
+    char* output = (char*)malloc(len1 + len2 + 1);
+
+    strcpy(output, str1);
+    strcat(output, str2);
+
+    return output;
 }

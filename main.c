@@ -3,15 +3,21 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
+#define HTML "./page/HelloWorld.html"
+
 int main(){
     printf("Hello, world!\n");
+    //printf("%s\n", file_to_string(HTML));
 
     //generate reponse
     char buffer[BUFFER_SIZE];
-    char resp[] = "HTTP/1.0 200 OK\r\n"
+    char header[] = "HTTP/1.0 200 OK\r\n"
                   "Server: webserver-c\r\n"
-                  "Content-type: text/html\r\n\r\n"
-                  "<html>Hello, world</html>\r\n";
+                  "Content-type: text/html\r\n\r\n";
+
+    char* html = file_to_string(HTML);
+    char* resp = concat_strings(header, html);
+
 
     //setup
     int sockfd;
