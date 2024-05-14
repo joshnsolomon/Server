@@ -60,11 +60,13 @@ int main(){
         if(regexec(&re, buffer, 0, NULL, 0) == 0){
             buffer_write(newsockfd, img_resp);
             printf("**************************** they want the flowers ************************************************\n");
+            exit(0);
         }
         else 
             buffer_write(newsockfd, resp);
 
-        close(newsockfd);
+
+        //close(newsockfd);
     }
 
 
