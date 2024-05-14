@@ -1,11 +1,12 @@
 #include "server.h"
 #include <regex.h>
+#include <stdlib.h>
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
 #define HTML "./page/HelloWorld.html"
-#define FLOWERS "./page/flowers3.jpg"
+#define FLOWERS "./page/flowers3.png"
 
 int main(){
     printf("Hello, world!\n");
@@ -13,18 +14,24 @@ int main(){
 
     //generate reponse
     char buffer[BUFFER_SIZE];
-    char header[] = "HTTP/1.0 200 OK\r\n"
+    char header[] = "HTTP/1.1 200 OK\r\n"
                   "Server: webserver-c\r\n"
+                  "Content-length: 431"
                   "Content-type: text/html\r\n\r\n";
 
     char* html = file_to_string(HTML);
     char* resp = concat_strings(header, html);
 
-    char imageheader[] = "HTTP/1.0 200 OK\r\n"
-                         "Content-Type: image/jpeg\r\n"
-                         "Content-Length: 50000\r\n\r\n";
-    char* flowers = file_to_string(FLOWERS);
-    char* img_resp = concat_strings(imageheader, flowers);
+    char imageheader[] = "HTTP/1.1 200 OK\r\n"
+                         "Content-Type: image/png\r\n"
+                         "Content-Length: 163424\r\n\r\n";
+    
+    long length = 0;
+    char* flowers = image_to_buffer(FLOWERS, &length);
+    char* img_resp = (char*)malloc(sizeof(imageheader) + length);
+    
+    memcpy(img_resp, imageheader, sizeof(imageheader));
+    memcpy(img_resp+sizeof(imageheader), flowers, length);
 
     //regex 
     regex_t re;
@@ -52,7 +59,7 @@ int main(){
         //write
         if(regexec(&re, buffer, 0, NULL, 0) == 0){
             buffer_write(newsockfd, img_resp);
-            printf("**************************** they want the flowers ************************************************");
+            printf("**************************** they want the flowers ************************************************\n");
         }
         else 
             buffer_write(newsockfd, resp);

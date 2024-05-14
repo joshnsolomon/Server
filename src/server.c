@@ -108,3 +108,19 @@ char* concat_strings(char* str1, char* str2){
 
     return output;
 }
+
+char* image_to_buffer(const char* path, long* length){
+    FILE* image = fopen(path, "rb");
+
+    fseek(image, 0, SEEK_END);
+    *length = ftell(image);
+    fseek(image, 0, SEEK_SET);
+
+    char* buffer = (char*)malloc(*length * sizeof(char));
+
+    fread(buffer, sizeof(char), *length, image);
+
+    fclose(image);
+
+    return buffer;
+}

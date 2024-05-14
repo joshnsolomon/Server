@@ -1,3 +1,4 @@
 server
 .DS_Store
 a.out
+.vscode
