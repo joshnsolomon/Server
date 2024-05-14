@@ -1,5 +1,6 @@
 #include "server.h"
 #include <regex.h>
+#include <stdlib.h>
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
@@ -52,12 +53,14 @@ int main(){
         //write
         if(regexec(&re, buffer, 0, NULL, 0) == 0){
             buffer_write(newsockfd, img_resp);
-            printf("**************************** they want the flowers ************************************************");
+            printf("**************************** they want the flowers ************************************************\n");
+            exit(0);
         }
         else 
             buffer_write(newsockfd, resp);
 
-        close(newsockfd);
+
+        //close(newsockfd);
     }
 
 

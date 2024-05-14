@@ -3,6 +3,7 @@
 
 int setup(int* sockfd, struct sockaddr_in* host_addr, int port){
 
+    //make socket
     *sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if(*sockfd == -1){
         perror("socket not made");
@@ -11,6 +12,8 @@ int setup(int* sockfd, struct sockaddr_in* host_addr, int port){
     else{
         printf("socket made\n");
     }
+    int option = 1;
+    setsockopt(*sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 
     //make connection address
     int host_addr_len = sizeof(*host_addr);
