@@ -112,7 +112,7 @@ char* concat_strings(char* str1, char* str2){
     return output;
 }
 
-char* image_to_buffer(const char* path, long* length){
+char* file_to_buffer(const char* path, long* length){
     FILE* image = fopen(path, "rb");
 
     fseek(image, 0, SEEK_END);
@@ -126,4 +126,18 @@ char* image_to_buffer(const char* path, long* length){
     fclose(image);
 
     return buffer;
+}
+
+char* response(const char* header, const char* path, long* resp_length){
+    long length = 0;
+    char* payload = file_to_buffer(path, &length);
+    *resp_length =  strlen(header) + length;
+    char* response = (char*)malloc(*resp_length);
+
+    memcpy(response, header, strlen(header));
+    memcpy(response+strlen(header), payload, length);
+
+    free(payload);
+
+    return response;
 }

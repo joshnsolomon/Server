@@ -7,37 +7,57 @@
 
 #define HTML "./page/HelloWorld.html"
 #define FLOWERS "./page/flowers3.png"
+#define CSS "./page/style.css"
+#define LOGO "./page/logo.png"
 
 int main(){
     printf("Hello, world!\n");
     //printf("%s\n", file_to_string(HTML));
 
-    //generate reponse
+    //buffer for receiving messages from client
     char buffer[BUFFER_SIZE];
+    
+    //html response
     char header[] = "HTTP/1.0 200 OK\r\n"
                   "Server: webserver-c\r\n"
-                  "Content-length: 431"
                   "Content-type: text/html\r\n\r\n";
 
-    char* html = file_to_string(HTML);
-    char* resp = concat_strings(header, html);
+    long length;
+    char* resp = response(header, HTML, &length);
 
+    //image response
     char imageheader[] = "HTTP/1.0 200 OK\r\n"
-                         "Content-Type: image/png\r\n"
-                         "Content-Length: 163424\r\n\r\n";
+                         "Server: webserver-c\r\n"
+                         "Content-Type: image/png\r\n\r\n";
+
+    long resp_length;
+    char* img_resp = response(imageheader, FLOWERS, &resp_length);
     
-    long length = 0;
-    char* flowers = image_to_buffer(FLOWERS, &length);
-    long resp_length = sizeof(imageheader) + length;
-    char* img_resp = (char*)malloc(resp_length);
-    printf("RESPONSE SIZE: %lu\n", resp_length);
-    
-    memcpy(img_resp, imageheader, sizeof(imageheader));
-    memcpy(img_resp+sizeof(imageheader)-1, flowers, length); //not sure exactly why -1, I think is the string term char
+    //css response
+    char cssheader[] = "HTTP/1.0 200 OK\r\n"
+                         "Server: webserver-c\r\n"
+                         "Content-Type: text/css\r\n\r\n";
+
+    long css_length;
+    char* css_resp = response(cssheader, CSS, &css_length);
+
+    //logo response
+    char logoheader[] = "HTTP/1.0 200 OK\r\n"
+                         "Server: webserver-c\r\n"
+                         "Content-Type: image/png\r\n\r\n";
+
+    long logo_length;
+    char* logo_resp = response(logoheader, LOGO, &logo_length);
 
     //regex 
-    regex_t re;
-    regcomp(&re, "flowers3", 0);
+    regex_t flowers;
+    regcomp(&flowers, "flowers3", 0);
+
+    regex_t css;
+    regcomp(&css, "style", 0);
+
+    regex_t logo;
+    regcomp(&logo, "logo", 0);
 
 
 
@@ -59,13 +79,17 @@ int main(){
 
 
         //write
-        if(regexec(&re, buffer, 0, NULL, 0) == 0){
+        if(regexec(&flowers, buffer, 0, NULL, 0) == 0){
             buffer_write(newsockfd, img_resp, resp_length);
-            printf("**************************** they want the flowers ************************************************\n");
-            //exit(0);
-        }
-        else 
-            buffer_write(newsockfd, resp, strlen(resp));
+
+        } else if (regexec(&css, buffer, 0, NULL, 0) == 0){
+            buffer_write(newsockfd, css_resp, css_length);
+        
+        } else if (regexec(&logo, buffer, 0, NULL, 0) == 0){
+            buffer_write(newsockfd, logo_resp, logo_length);
+
+        } else 
+            buffer_write(newsockfd, resp, length);
 
 
         close(newsockfd);
