@@ -14,7 +14,7 @@ int main(){
 
     //generate reponse
     char buffer[BUFFER_SIZE];
-    char header[] = "HTTP/1.1 200 OK\r\n"
+    char header[] = "HTTP/1.0 200 OK\r\n"
                   "Server: webserver-c\r\n"
                   "Content-length: 431"
                   "Content-type: text/html\r\n\r\n";
@@ -22,16 +22,18 @@ int main(){
     char* html = file_to_string(HTML);
     char* resp = concat_strings(header, html);
 
-    char imageheader[] = "HTTP/1.1 200 OK\r\n"
+    char imageheader[] = "HTTP/1.0 200 OK\r\n"
                          "Content-Type: image/png\r\n"
                          "Content-Length: 163424\r\n\r\n";
     
     long length = 0;
     char* flowers = image_to_buffer(FLOWERS, &length);
-    char* img_resp = (char*)malloc(sizeof(imageheader) + length);
+    long resp_length = sizeof(imageheader) + length;
+    char* img_resp = (char*)malloc(resp_length);
+    printf("RESPONSE SIZE: %lu\n", resp_length);
     
     memcpy(img_resp, imageheader, sizeof(imageheader));
-    memcpy(img_resp+sizeof(imageheader), flowers, length);
+    memcpy(img_resp+sizeof(imageheader)-1, flowers, length); //not sure exactly why -1, I think is the string term char
 
     //regex 
     regex_t re;
@@ -58,15 +60,15 @@ int main(){
 
         //write
         if(regexec(&re, buffer, 0, NULL, 0) == 0){
-            buffer_write(newsockfd, img_resp);
+            buffer_write(newsockfd, img_resp, resp_length);
             printf("**************************** they want the flowers ************************************************\n");
-            exit(0);
+            //exit(0);
         }
         else 
-            buffer_write(newsockfd, resp);
+            buffer_write(newsockfd, resp, strlen(resp));
 
 
-        //close(newsockfd);
+        close(newsockfd);
     }
 
 

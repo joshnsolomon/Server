@@ -69,8 +69,8 @@ int buffer_read(int socket, char* buffer, int buffersize){
     return 0; 
 }
 
-int buffer_write(int socket, void* resp){
-        int valwrite = write(socket, resp, strlen(resp));
+int buffer_write(int socket, void* resp, long len){
+        int valwrite = write(socket, resp, len);
         if(valwrite < 0){
             perror("WRITE ERROR\n");
             return 5;
