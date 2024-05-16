@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <regex.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 int main(){
@@ -40,8 +41,12 @@ int main(){
     int length = end - start;
     printf("length of match %d\n", length);
 
-    char* output = (char*)malloc(length+1);
-    snprintf(output, length+1, "%s", buffer + start);
+    char* file = (char*)malloc(length+1);
+    char folder[] = "./page";
+    snprintf(file, length+1, "%s", buffer + start);
+    char* output = (char*)malloc(length+1 + strlen(folder));
+    sprintf(output, "%s%s", folder, file);
+    free(file);
     printf("%s\n", output);
 
     return 0;

@@ -27,24 +27,21 @@ int main(){
 
     //image response
     char imageheader[] = "HTTP/1.0 200 OK\r\n"
-                         "Server: webserver-c\r\n"
-                         "Content-Type: image/png\r\n\r\n";
+                         "Server: webserver-c\r\n\r\n";
 
     long resp_length;
     char* img_resp = response(imageheader, FLOWERS, &resp_length);
     
     //css response
     char cssheader[] = "HTTP/1.0 200 OK\r\n"
-                         "Server: webserver-c\r\n"
-                         "Content-Type: text/css\r\n\r\n";
+                         "Server: webserver-c\r\n\r\n";
 
     long css_length;
     char* css_resp = response(cssheader, CSS, &css_length);
 
     //logo response
     char logoheader[] = "HTTP/1.0 200 OK\r\n"
-                         "Server: webserver-c\r\n"
-                         "Content-Type: image/png\r\n\r\n";
+                         "Server: webserver-c\r\n\r\n";
 
     long logo_length;
     char* logo_resp = response(logoheader, LOGO, &logo_length);
