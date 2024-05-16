@@ -1,11 +1,12 @@
 #include <stdio.h>
-
+#include <regex.h>
+#include <stdlib.h>
 
 
 int main(){
 
+    //the message to parse
     printf("Hello World\n"); 
-
     char buffer[] = "GET /flowers3.png HTTP/1.1\r\n"
                      "Host: localhost:8080\r\n"
                      "Connection: keep-alive\r\n"
@@ -21,8 +22,27 @@ int main(){
                      "Referer: http://localhost:8080/\r\n"
                      "Accept-Encoding: gzip, deflate, br\r\n"
                      "Accept-Language: en-US,en;q=0.9";
+    //printf("%s\n", buffer);
 
-    printf("%s\n", buffer);
+    regex_t pattern;
+    regmatch_t match[1];
+    regcomp(&pattern, "GET [^$]* HTTP", REG_EXTENDED);
+    //regcomp(&pattern, " HTTP", REG_EXTENDED);
+
+    char inputs[25];
+    int found = regexec(&pattern, buffer, 1, match, 0);
+
+    printf("Was it found? %d\n", found);
+
+    int start = match[0].rm_so + 4;
+    int end = match[0].rm_eo - 5;
+
+    int length = end - start;
+    printf("length of match %d\n", length);
+
+    char* output = (char*)malloc(length+1);
+    snprintf(output, length+1, "%s", buffer + start);
+    printf("%s\n", output);
 
     return 0;
 }
