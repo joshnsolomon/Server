@@ -1,5 +1,6 @@
 #include "server.h"
 #include <stdlib.h>
+#include <regex.h>
 
 int setup(int* sockfd, struct sockaddr_in* host_addr, int port){
 
@@ -37,7 +38,7 @@ int setup(int* sockfd, struct sockaddr_in* host_addr, int port){
         perror("listening error\n");
         return 2;
     } else {
-        printf("socket listening..\n");
+        printf("socket listening..\n\n\n");
     }
 
     return 0;
@@ -52,8 +53,6 @@ int server_connect(int* sockfd, struct sockaddr_in* host_addr){
     if(newsockfd < 0){
         perror("server error");
         return -1;
-    } else {
-        printf("connection accepted\n");
     }
 
     return newsockfd;
@@ -65,7 +64,7 @@ int buffer_read(int socket, char* buffer, int buffersize){
         perror("READ ERROR");
         return 4;
     }
-    printf("%s\n", buffer);
+    print_nLines(buffer, 3);
     return 0; 
 }
 
@@ -112,6 +111,19 @@ char* concat_strings(char* str1, char* str2){
     return output;
 }
 
+void print_nLines(char* buffer, int n){
+    FILE* stream = fmemopen(buffer, strlen(buffer),"r");
+    char* line = malloc(1024);
+    int i = 0;
+    while(fgets(line, 1024, stream) && i < n){
+        printf("%s", line);
+        i++;
+    }
+    printf("\n");
+    free(line);
+    fclose(stream);
+}
+
 char* file_to_buffer(const char* path, long* length){
     FILE* image = fopen(path, "rb");
 
@@ -128,7 +140,12 @@ char* file_to_buffer(const char* path, long* length){
     return buffer;
 }
 
-char* response(const char* header, const char* path, long* resp_length){
+char* response(const char* path, long* resp_length){
+    
+    char header[] = "HTTP/1.0 200 OK\r\n"
+                  "Server: webserver-c\r\n\r\n";
+    
+    
     long length = 0;
     char* payload = file_to_buffer(path, &length);
     *resp_length =  strlen(header) + length;
@@ -141,3 +158,26 @@ char* response(const char* header, const char* path, long* resp_length){
 
     return response;
 }
+
+char* parse(const char* buffer){
+    regex_t pattern;
+    regmatch_t match[1];
+    regcomp(&pattern, "GET [^$]* HTTP", REG_EXTENDED);
+
+    
+    int found = regexec(&pattern, buffer, 1, match, 0);
+
+    int start = match[0].rm_so + 4;
+    int end = match[0].rm_eo - 5;
+
+    int length = end - start;
+
+    char* file = (char*)malloc(length+1);
+    char folder[] = "./page";
+    snprintf(file, length+1, "%s", buffer + start);
+    char* output = (char*)malloc(length+1 + strlen(folder));
+    sprintf(output, "%s%s", folder, file);
+    free(file);
+    return output;   
+}
+

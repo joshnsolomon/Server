@@ -4,6 +4,21 @@
 #include <string.h>
 
 
+
+void print_nLines(char* buffer, int n){
+    FILE* stream = fmemopen(buffer, strlen(buffer),"r");
+    char* line = malloc(1024);
+    int i = 0;
+    while(fgets(line, 1024, stream) && i < n){
+        printf("%s", line);
+        i++;
+    }
+    printf("\n\n");
+    free(line);
+    fclose(stream);
+}
+
+
 int main(){
 
     //the message to parse
@@ -24,6 +39,9 @@ int main(){
                      "Accept-Encoding: gzip, deflate, br\r\n"
                      "Accept-Language: en-US,en;q=0.9";
     //printf("%s\n", buffer);
+
+
+    print_nLines(buffer, 5);
 
     regex_t pattern;
     regmatch_t match[1];
