@@ -1,4 +1,9 @@
 # Server
 
-trying to write a server in C so I can perhaps figure out how the internet actually works.
-This perhaps may be overkill.
+A simple http server. Just put whatever you want to serve in the page folder.
+
+## build
+It only depends on the standard library so the ```run.sh``` script should work.
+
+___
+**NOTE:** I wrote this in C, and only tested it on a private network, so I'm sure it's wildly unsafe.
