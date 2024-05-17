@@ -2,7 +2,7 @@
 #include <regex.h>
 #include <stdlib.h>
 
-#define PORT 8080
+#define PORT 80
 #define BUFFER_SIZE 1024
 
 #define HTML "./page/HelloWorld.html"
@@ -29,7 +29,6 @@ int main(){
         //read
         buffer_read(newsockfd, buffer, BUFFER_SIZE);
         messages++;
-        printf("Messages Received: %d\n\n\n", messages);
 
         //write
         char* file = parse(buffer); // file name
@@ -37,10 +36,12 @@ int main(){
         if (strcmp(file, "./page/")  == 0){ //initial request
             resp = response(HTML, &resp_length);
             buffer_write(newsockfd,resp, resp_length);
+            free(resp);
 
         } else if(access(file, F_OK) == 0){ //wants a file
             resp = response(file, &resp_length);
             buffer_write(newsockfd,resp, resp_length);
+            free(resp);
 
         } else { //file not found
             printf("FILE DOES NOT EXIST**********************   ->%s\n", file);
@@ -48,8 +49,8 @@ int main(){
         }
             
 
+        printf("Messages Received: %d\n\n\n", messages);
         free(file);
-        free(resp);
         close(newsockfd);
     }
 

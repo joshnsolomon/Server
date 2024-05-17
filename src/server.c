@@ -14,7 +14,6 @@ int setup(int* sockfd, struct sockaddr_in* host_addr, int port){
         printf("socket made\n");
     }
     int option = 1;
-    setsockopt(*sockfd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 
     //make connection address
     int host_addr_len = sizeof(*host_addr);
