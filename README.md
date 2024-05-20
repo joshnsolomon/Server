@@ -1,5 +1,7 @@
 # Server
 
+This is the docker branch. It's so I could try to launch the server with docker.
+
 A simple http server. Just put whatever you want to serve in the page folder.
 
 ## build
