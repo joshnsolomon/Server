@@ -20,7 +20,7 @@ int setup(int* sockfd, struct sockaddr_in* host_addr, int port){
 
     host_addr->sin_family = AF_INET;
     host_addr->sin_port = htons(port);
-    host_addr->sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    host_addr->sin_addr.s_addr = htonl(INADDR_ANY);
 
     //bind socket
     int binder = bind(*sockfd, (struct sockaddr*)host_addr, host_addr_len);

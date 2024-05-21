@@ -2,7 +2,7 @@
 #include <regex.h>
 #include <stdlib.h>
 
-#define PORT 80
+#define PORT 8080
 #define BUFFER_SIZE 1024
 
 #define HTML "./page/HelloWorld.html"
